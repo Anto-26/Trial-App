@@ -1,14 +1,62 @@
 import streamlit as st
+from groq import Groq
+from dotenv import load_dotenv
+import os
 
-# App title
-st.title("👋 Personalized Greeting App")
+# Load environment variables from .env
+load_dotenv()
 
-# Ask the user to enter their name
-name = st.text_input("Enter your name:")
+# Initialize GROQ client
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-# Add a button to trigger the greeting
-if st.button("Say Hi"):
-    if name.strip() != "":
-        st.success(f"Hi, {name}! 👋 Welcome to my Streamlit app.")
+# Streamlit page config
+st.set_page_config(page_title="Chat with James", page_icon="😎", layout="centered")
+st.title("💬 Chat with James!")
+
+# Initialize chat history in session state
+if "messages" not in st.session_state:
+    # Add system message to define James' personality
+    st.session_state.messages = [
+        {"role": "system", "content": (
+            "You are James, a sarcastic, fun-loving AI. "
+            "You make witty comebacks, tease playfully, "
+            "and respond with humor and cheeky remarks."
+        )}
+    ]
+
+# Function to send message to GROQ
+def send_to_groq(user_message):
+    try:
+        # Add user message to session state
+        st.session_state.messages.append({"role": "user", "content": user_message})
+        
+        # Get response from GROQ
+        response = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            messages=st.session_state.messages
+        )
+        
+        bot_message = response.choices[0].message.content
+        
+        # Add bot response to session state
+        st.session_state.messages.append({"role": "bot", "content": bot_message})
+        
+        return bot_message
+    except Exception as e:
+        return f"Error: {e}"
+
+# Chat input
+user_input = st.text_input("Say something to James...")
+
+if st.button("Send"):
+    if user_input.strip():
+        send_to_groq(user_input)
     else:
-        st.warning("Please enter your name before clicking the button.")
+        st.warning("Type something first, don't be shy!")
+
+# Display chat messages with playful formatting
+for msg in st.session_state.messages:
+    if msg["role"] == "user":
+        st.markdown(f"**You:** {msg['content']}")
+    elif msg["role"] == "bot":
+        st.markdown(f"**James:** {msg['content']} 😏")
