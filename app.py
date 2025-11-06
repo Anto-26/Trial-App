@@ -3,19 +3,18 @@ from groq import Groq
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env
+# Load .env locally only
 load_dotenv()
 
-# Initialize GROQ client
+# Initialize GROQ client with API key from environment
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 # Streamlit page config
 st.set_page_config(page_title="Chat with James", page_icon="😎", layout="centered")
 st.title("💬 Chat with James!")
 
-# Initialize chat history in session state
+# Initialize chat history
 if "messages" not in st.session_state:
-    # Add system message to define James' personality
     st.session_state.messages = [
         {"role": "system", "content": (
             "You are James, a sarcastic, fun-loving AI. "
@@ -27,20 +26,13 @@ if "messages" not in st.session_state:
 # Function to send message to GROQ
 def send_to_groq(user_message):
     try:
-        # Add user message to session state
         st.session_state.messages.append({"role": "user", "content": user_message})
-        
-        # Get response from GROQ
         response = client.chat.completions.create(
             model="meta-llama/llama-4-scout-17b-16e-instruct",
             messages=st.session_state.messages
         )
-        
         bot_message = response.choices[0].message.content
-        
-        # Add bot response to session state
         st.session_state.messages.append({"role": "bot", "content": bot_message})
-        
         return bot_message
     except Exception as e:
         return f"Error: {e}"
@@ -54,7 +46,7 @@ if st.button("Send"):
     else:
         st.warning("Type something first, don't be shy!")
 
-# Display chat messages with playful formatting
+# Display chat messages
 for msg in st.session_state.messages:
     if msg["role"] == "user":
         st.markdown(f"**You:** {msg['content']}")
