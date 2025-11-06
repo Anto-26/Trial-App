@@ -1,12 +1,13 @@
 import streamlit as st
 from groq import Groq
+from dotenv import load_dotenv
+import os
 
-# -------------------------------
-# TEMPORARY: Hardcoded API key
-# -------------------------------
+# Load .env locally only
+load_dotenv()
 
-# Initialize GROQ client
-client = Groq(api_key=GROQ_API_KEY)
+# Initialize GROQ client with API key from environment
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 # Streamlit page config
 st.set_page_config(page_title="Chat with James", page_icon="😎", layout="centered")
