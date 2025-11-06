@@ -4,7 +4,6 @@ from groq import Groq
 # -------------------------------
 # TEMPORARY: Hardcoded API key
 # -------------------------------
-GROQ_API_KEY = "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"  # <-- Replace with your key
 
 # Initialize GROQ client
 client = Groq(api_key=GROQ_API_KEY)
