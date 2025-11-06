@@ -3,11 +3,14 @@ from groq import Groq
 from dotenv import load_dotenv
 import os
 
-# Load .env locally only
-load_dotenv()
+import os
+from groq import Groq
 
-# Initialize GROQ client with API key from environment
+if "GROQ_API_KEY" not in os.environ:
+    st.warning("GROQ_API_KEY is not set! Set it in Secrets on Streamlit Cloud.")
+
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
 
 # Streamlit page config
 st.set_page_config(page_title="Chat with James", page_icon="😎", layout="centered")
