@@ -1,16 +1,10 @@
 import streamlit as st
 from groq import Groq
-from dotenv import load_dotenv
-import os
 
-import os
-from groq import Groq
+GROQ_API_KEY = "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"  # <-- Replace with your key for testing
 
-if "GROQ_API_KEY" not in os.environ:
-    st.warning("GROQ_API_KEY is not set! Set it in Secrets on Streamlit Cloud.")
-
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-
+# Initialize GROQ client
+client = Groq(api_key=GROQ_API_KEY)
 
 # Streamlit page config
 st.set_page_config(page_title="Chat with James", page_icon="😎", layout="centered")
